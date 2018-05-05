@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:test2="http://www.mulesoft.org/schema/mule/test2" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/test2 http://www.mulesoft.org/schema/mule/test2/current/mule-test2.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="d7a9350e-de96-4e3e-9892-017c7a0f5085" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<test2:config name="Test2_Config" doc:name="Test2 Config" doc:id="d0624108-d1b0-4bc4-9a91-5c82ceb7526c" />
+	<flow name="studio-7.1-runtime-4.1Flow" doc:id="6d400dcf-3d33-46bd-bf00-e692ee08cf6a" >
+		<http:listener doc:name="Listener" doc:id="c4c24bc8-3f7b-48fb-95b8-8efa3c625581" config-ref="HTTP_Listener_config" path="/mule71" />
+		<set-payload value="#['success']" doc:name="Set Payload" doc:id="dc41df41-5b32-4a6e-b6bc-84ca52ac8803" />
+		<test2:get-books doc:name="Get books" doc:id="53b4bea5-1dad-447b-8153-1180423dc8d6" config-ref="Test2_Config"/>
+		<logger level="INFO" doc:name="Logger" doc:id="0e008f29-1a5f-43ac-9d73-7580a03dd218" message="#[payload]"/>
+	</flow>
+	<flow name="studio-7.1-runtime-4.1Flow1" doc:id="78b529e9-3f99-4dc9-9c67-3938cc2fdfa9" >
+		<http:listener doc:name="Listener" doc:id="4b9f5bdb-9d6f-424f-b014-87a54bb0b284" config-ref="HTTP_Listener_config" path="/flow2" allowedMethods="POST"/>
+		<flow-ref doc:name="studio-7.1-runtime-4.1Sub_Flow" doc:id="0174a617-d6a6-4da1-9c65-6919c3711bac" name="studio-7.1-runtime-4.1Sub_Flow"/>
+	</flow>
+	<sub-flow name="studio-7.1-runtime-4.1Sub_Flow" doc:id="7c536117-89fc-437f-bfff-1bf100036197" >
+		<choice doc:name="Choice" doc:id="c077eea5-9fc8-45d0-9c66-818f5a5e5ccf" >
+			<when expression="#[payload.message == 'main']" >
+				<ee:transform doc:name="Transform Message" doc:id="5eea3f61-a10a-42d8-8876-03d8c973913c" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"flowCalled" : 'Main transform --- ' ++ payload.message
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="3317f11f-ba3d-439b-8274-5b09aedeabe6" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"flowCalled" : 'something else transform --- ' ++ payload.message
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+	</sub-flow>
+</mule>

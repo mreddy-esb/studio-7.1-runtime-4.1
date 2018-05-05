@@ -1,0 +1,20 @@
+{
+  "configs": [
+    "studio-7.1-runtime-4.1.xml"
+  ],
+  "secureProperties": [],
+  "redeploymentEnabled": true,
+  "name": "studio-7.1-runtime-4.1",
+  "minMuleVersion": "4.1.1",
+  "requiredProduct": "MULE_EE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "exportedResources": []
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  }
+}
